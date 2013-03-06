@@ -1,0 +1,10 @@
+name = Panopoly Tour Link in NavBar
+description = Panopoly Tour Link in NavBar
+core = 7.x
+package = Panopoly
+dependencies[] = navbar
+dependencies[] = joyride
+php = 5.2.4
+
+version = "7.x-1.0-rc3"
+core = "7.x"

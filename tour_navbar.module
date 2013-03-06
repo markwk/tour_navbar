@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Implements hook_navbar_view_alter().
+ * 
+ * Add "Start tour" to navbar links
+ * 
+ */
+function tour_navbar_navbar_view_alter(&$data, &$context) {
+  drupal_add_js(drupal_get_path('module', 'joyride') . '/inc/js/joyride_context.js');
+  drupal_add_js(drupal_get_path('module', 'joyride') . '/inc/js/joyride_start_link.js');
+  $data['navbar_navigation']['#links']['start_tour'] = array(
+      'title' => t('Start tour'),
+      'href' => '',
+      'html' => FALSE,
+      'attributes' => array(
+          'title' => t('Start tour'),
+          'class' => array('tab', 'start-tour-link', 'joyride-start-link'),
+      ),
+  );
+  $path = drupal_get_path('module', 'tour_navbar');
+  drupal_add_css($path . '/css/tour_navbar.css', array('type' => 'file'));
+}
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function tour_navbar_ctools_plugin_api($module, $api) {
+  if ($module == "context" && $api == "context") {
+    return array("version" => 3); 
+  }
+}
+
+/**
+ * Implements hook_context_default_contexts().
+ * Provide default module's contexts.
+ *
+ * @return array
+ */
+function tour_navbar_context_default_contexts() {
+  $export = array();
+  $context = new stdClass();
+  $context->disabled = FALSE;
+  $context->api_version = 3;
+  $context->name = 'panopoly_site_usage_tour';
+  $context->description = '';
+  $context->tag = 'joyride';
+  $context->conditions = array(
+      'path' => array(
+          'values' => array(
+              '*' => '*',
+          ),
+      ),
+  );
+  $context->reactions = array(
+      'joyride_add' => array(
+          'joyride_auto_start' => 0,
+          'joyride_play_once' => FALSE,
+          'joyride_tour_content' => '<li data-id="navbar-actions" data-text="Next" class="custom">
+  <h2>Stop #1</h2>
+  <p>You can control all the details for you tour stop. Any valid HTML will work inside of Joyride.</p>
+</li>
+<li data-class="home-link" data-button="Next" data-options="tipLocation:top;tipAnimation:fade">
+  <h2>Stop #2</h2>
+  <p>Get the details right by styling Joyride with a custom stylesheet!</p>
+</li>
+<li data-id="navbar-user" data-button="Next" data-options="tipLocation:right">
+  <h2>Stop #3</h2>
+  <p>It works right aligned.</p>
+</li>
+<li data-button="Close">
+  <h2>Stop #4</h2>
+  <p>Now what are you waiting for? Add this to your projects and get the most out of your apps!</p>
+</li>',
+      ),
+  );
+  $context->condition_mode = 0;
+  t('joyride');
+  $export[$context->name] = $context;
+  return $export;
+}
